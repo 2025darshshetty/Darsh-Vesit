@@ -1,0 +1,207 @@
+import java.util.Scanner;
+
+class StudentNode {
+    int id;
+    String name;
+    double gpa;
+    StudentNode next;
+
+    public StudentNode(int id, String name, double gpa) {
+        this.id = id;
+        this.name = name;
+        this.gpa = gpa;
+        this.next = null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[ID: %d | Name: %-15s | GPA: %.2f]", id, name, gpa);
+    }
+}
+
+class StudentLinkedList {
+    private StudentNode head;
+
+    public StudentLinkedList() {
+        this.head = null;
+    }
+
+    public void enrollStudent(int id, String name, double gpa) {
+        if (search(id) != null) {
+            System.out.println("Error: Student with ID " + id + " is already enrolled.");
+            return;
+        }
+        StudentNode newNode = new StudentNode(id, name, gpa);
+        newNode.next = head;
+        head = newNode;
+        System.out.println("Student '" + name + "' enrolled successfully!");
+    }
+
+    public void withdrawStudent(int id) {
+        if (head == null) {
+            System.out.println("Roster is empty. No record to withdraw.");
+            return;
+        }
+
+        if (head.id == id) {
+            System.out.println("Withdrawn: " + head.name + " (ID: " + id + ")");
+            head = head.next;
+            return;
+        }
+
+        StudentNode current = head;
+        while (current.next != null && current.next.id != id) {
+            current = current.next;
+        }
+
+        if (current.next != null) {
+            System.out.println("Withdrawn: " + current.next.name + " (ID: " + id + ")");
+            current.next = current.next.next;
+        } else {
+            System.out.println("Student with ID " + id + " not found.");
+        }
+    }
+
+    public StudentNode search(int id) {
+        StudentNode current = head;
+        while (current != null) {
+            if (current.id == id) {
+                return current;
+            }
+            current = current.next;
+        }
+        return null;
+    }
+
+    public void updateRecord(int id, String newName, double newGpa) {
+        StudentNode student = search(id);
+        if (student != null) {
+            student.name = newName;
+            student.gpa = newGpa;
+            System.out.println("Record updated for ID " + id);
+        } else {
+            System.out.println("Cannot update: Student with ID " + id + " not found.");
+        }
+    }
+
+    public void displayAll() {
+        if (head == null) {
+            System.out.println("No student records available.");
+            return;
+        }
+
+        System.out.println("\n==========================================");
+        System.out.println("         REGISTERED STUDENTS LIST         ");
+        System.out.println("==========================================");
+        StudentNode current = head;
+        int count = 1;
+        while (current != null) {
+            System.out.println(count++ + ". " + current);
+            current = current.next;
+        }
+        System.out.println("==========================================");
+    }
+}
+
+public class CollegeRegistrationSystem {
+    public static void main(String[] args) {
+        StudentLinkedList roster = new StudentLinkedList();
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
+
+        while (running) {
+            System.out.println("\n--- STUDENT REGISTRATION SYSTEM ---");
+            System.out.println("1. Enroll Student");
+            System.out.println("2. Withdraw Student");
+            System.out.println("3. Search Student Record");
+            System.out.println("4. Update Student Details");
+            System.out.println("5. Display Roster");
+            System.out.println("6. Exit");
+            System.out.print("Select an option (1-6): ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input! Please enter a number between 1 and 6.");
+                scanner.next(); // Clear invalid input
+                continue;
+            }
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); 
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Student ID: ");
+                    int id = getIntInput(scanner);
+                    System.out.print("Enter Student Name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter Student GPA: ");
+                    double gpa = getDoubleInput(scanner);
+                    roster.enrollStudent(id, name, gpa);
+                    break;
+
+                case 2:
+                    System.out.print("Enter Student ID to Withdraw: ");
+                    int withdrawId = getIntInput(scanner);
+                    roster.withdrawStudent(withdrawId);
+                    break;
+
+                case 3:
+                    System.out.print("Enter Student ID to Search: ");
+                    int searchId = getIntInput(scanner);
+                    StudentNode found = roster.search(searchId);
+                    if (found != null) {
+                        System.out.println("🔍 Record Found: " + found);
+                    } else {
+                        System.out.println("Student with ID " + searchId + " not found.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter Student ID to Update: ");
+                    int updateId = getIntInput(scanner);
+                    if (roster.search(updateId) != null) {
+                        System.out.print("Enter New Name: ");
+                        String newName = scanner.nextLine();
+                        System.out.print("Enter New GPA: ");
+                        double newGpa = getDoubleInput(scanner);
+                        roster.updateRecord(updateId, newName, newGpa);
+                    } else {
+                        System.out.println("Student with ID " + updateId + " not found.");
+                    }
+                    break;
+
+                case 5:
+                    roster.displayAll();
+                    break;
+
+                case 6:
+                    running = false;
+                    System.out.println("Exiting system. Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Choice out of range. Pick between 1 and 6.");
+            }
+        }
+        scanner.close();
+    }
+
+    private static int getIntInput(Scanner scanner) {
+        while (!scanner.hasNextInt()) {
+            System.out.print("Invalid integer. Try again: ");
+            scanner.next();
+        }
+        int val = scanner.nextInt();
+        scanner.nextLine(); 
+        return val;
+    }
+
+    private static double getDoubleInput(Scanner scanner) {
+        while (!scanner.hasNextDouble()) {
+            System.out.print("Invalid number. Try again: ");
+            scanner.next();
+        }
+        double val = scanner.nextDouble();
+        scanner.nextLine(); 
+        return val;
+    }
+}
