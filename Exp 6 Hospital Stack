@@ -1,0 +1,153 @@
+import java.util.Scanner;
+
+public class HospitalStack {
+
+    // Node class
+    static class Node {
+        int patientId;
+        String name;
+        String procedure;
+        Node next;
+
+        Node(int patientId, String name, String procedure) {
+            this.patientId = patientId;
+            this.name = name;
+            this.procedure = procedure;
+            this.next = null;
+        }
+    }
+
+    // Top of the stack
+    Node top = null;
+
+    // Scanner for user input
+    Scanner sc = new Scanner(System.in);
+
+    // Push patient record
+    void pushPatient() {
+        System.out.print("Enter Patient ID: ");
+        int patientId = sc.nextInt();
+        sc.nextLine();
+
+        System.out.print("Enter Patient Name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter Emergency Procedure: ");
+        String procedure = sc.nextLine();
+
+        Node newNode = new Node(patientId, name, procedure);
+
+        // Insert at the top of the stack
+        newNode.next = top;
+        top = newNode;
+
+        System.out.println("Patient record added to stack successfully.");
+    }
+
+    // Pop patient record
+    void popPatient() {
+        if (top == null) {
+            System.out.println("Stack is empty. No patient record to remove.");
+            return;
+        }
+
+        Node temp = top;
+
+        System.out.println("\nRemoving Patient Record:");
+        System.out.println("Patient ID: " + temp.patientId);
+        System.out.println("Name: " + temp.name);
+        System.out.println("Procedure: " + temp.procedure);
+
+        top = top.next;
+
+        System.out.println("Patient record removed successfully.");
+    }
+
+    // Peek at top patient
+    void peekPatient() {
+        if (top == null) {
+            System.out.println("Stack is empty.");
+            return;
+        }
+
+        System.out.println("\nTop Patient Record:");
+        System.out.println("Patient ID: " + top.patientId);
+        System.out.println("Name: " + top.name);
+        System.out.println("Procedure: " + top.procedure);
+    }
+
+    // Display all patient records
+    void displayPatients() {
+        if (top == null) {
+            System.out.println("Stack is empty.");
+            return;
+        }
+
+        Node temp = top;
+
+        System.out.println("\n========== EMERGENCY PATIENT STACK ==========");
+        System.out.printf("%-12s %-25s %-30s%n",
+                "Patient ID", "Name", "Procedure");
+        System.out.println("---------------------------------------------------------------------");
+
+        while (temp != null) {
+            System.out.printf("%-12d %-25s %-30s%n",
+                    temp.patientId, temp.name, temp.procedure);
+
+            temp = temp.next;
+        }
+
+        System.out.println("=====================================================================");
+    }
+
+    // Main method
+    public static void main(String[] args) {
+
+        HospitalStack stack = new HospitalStack();
+        Scanner sc = new Scanner(System.in);
+
+        int choice;
+
+        do {
+            System.out.println("\n========== HOSPITAL EMERGENCY SYSTEM ==========");
+            System.out.println("1. Add Patient Record (Push)");
+            System.out.println("2. Remove Patient Record (Pop)");
+            System.out.println("3. View Top Patient (Peek)");
+            System.out.println("4. Display All Patient Records");
+            System.out.println("5. Exit");
+            System.out.println("===============================================");
+            System.out.print("Enter your choice: ");
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    stack.pushPatient();
+                    break;
+
+                case 2:
+                    stack.popPatient();
+                    break;
+
+                case 3:
+                    stack.peekPatient();
+                    break;
+
+                case 4:
+                    stack.displayPatients();
+                    break;
+
+                case 5:
+                    System.out.println("Exiting program...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+
+        } while (choice != 5);
+
+        sc.close();
+    }
+}
