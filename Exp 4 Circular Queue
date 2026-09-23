@@ -1,60 +1,51 @@
-public class CircularQueue {
+import java.util.Scanner;
 
-    private int[] queue;
-    private int front;
-    private int rear;
-    private int size;
+class CircularQueue {
+    int[] queue;
+    int front = -1;
+    int rear = -1;
+    int size;
 
-    CircularQueue(int capacity) {
-        queue = new int[capacity];
-        front = -1;
-        rear = -1;
-        size = capacity;
+    CircularQueue(int size) {
+        this.size = size;
+        queue = new int[size];
     }
 
     void enqueue(int job) {
-
         if ((rear + 1) % size == front) {
-            System.out.println("Queue Overflow - Cannot add job " + job);
+            System.out.println("Queue is Full!");
             return;
         }
 
         if (front == -1) {
-            front = rear = 0;
-        } 
-
-        else {
-            rear = (rear + 1) % size;
+            front = 0;
         }
 
+        rear = (rear + 1) % size;
         queue[rear] = job;
 
         System.out.println("Print job " + job + " added.");
     }
 
     void dequeue() {
-
-
         if (front == -1) {
-            System.out.println("Queue Underflow - No print jobs.");
+            System.out.println("Queue is Empty!");
             return;
         }
 
         System.out.println("Print job " + queue[front] + " completed.");
 
         if (front == rear) {
-            front = rear = -1;
-        } 
-
-        else {
+            front = -1;
+            rear = -1;
+        } else {
             front = (front + 1) % size;
         }
     }
 
     void display() {
-
         if (front == -1) {
-            System.out.println("Queue is empty.");
+            System.out.println("Queue is Empty!");
             return;
         }
 
@@ -63,7 +54,6 @@ public class CircularQueue {
         int i = front;
 
         while (true) {
-
             System.out.print(queue[i] + " ");
 
             if (i == rear) {
@@ -75,29 +65,54 @@ public class CircularQueue {
 
         System.out.println();
     }
+}
 
+public class Main {
     public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
 
-        CircularQueue printerQueue = new CircularQueue(5);
+        System.out.print("Enter queue size: ");
+        int size = sc.nextInt();
 
-        // Add print jobs
-        printerQueue.enqueue(101);
-        printerQueue.enqueue(102);
-        printerQueue.enqueue(103);
-        printerQueue.enqueue(104);
+        CircularQueue cq = new CircularQueue(size);
 
-        printerQueue.display();
+        int choice;
 
-        // Complete two print jobs
-        printerQueue.dequeue();
-        printerQueue.dequeue();
+        do {
+            System.out.println("\n--- Circular Queue Menu ---");
+            System.out.println("1. Add Print Job");
+            System.out.println("2. Complete Print Job");
+            System.out.println("3. Display Print Queue");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
 
-        printerQueue.display();
+            choice = sc.nextInt();
 
-        // Reuse vacant positions
-        printerQueue.enqueue(105);
-        printerQueue.enqueue(106);
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Print Job Number: ");
+                    int job = sc.nextInt();
+                    cq.enqueue(job);
+                    break;
 
-        printerQueue.display();
+                case 2:
+                    cq.dequeue();
+                    break;
+
+                case 3:
+                    cq.display();
+                    break;
+
+                case 4:
+                    System.out.println("Program Exited.");
+                    break;
+
+                default:
+                    System.out.println("Invalid Choice!");
+            }
+
+        } while (choice != 4);
+
+        sc.close();
     }
 }
